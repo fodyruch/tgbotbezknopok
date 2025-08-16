@@ -9,6 +9,10 @@ from pytz import timezone
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 from functools import wraps
+from dotenv import load_dotenv
+
+# Загрузка переменных окружения из .env файла
+load_dotenv()
 
 # Настройка логов
 logging.basicConfig(
@@ -17,12 +21,16 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Конфигурация (для разработки оставляем здесь)
-TELEGRAM_TOKEN = "7856810515:AAFAMZMUkFgJM9W2mlhfitF9KYCe1Osf4b8"
-API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6IjQ0MTgyYzA2ZGI3YjY3NGQiLCJpYXQiOjE3NTQ4OTk5NDAsIm5iZiI6MTc1NDg5OTk0MCwiaXNzIjoiaHR0cHM6Ly93d3cuYmF0dGxlbWV0cmljcy5jb20iLCJzdWIiOiJ1cm46dXNlcjo0NzQwNDEifQ.PONtWWHqnF4MHkwTjZ7KjlgUVbXDwPGTNMc_4jcFbgs"
+# Конфигурация (загружаем из переменных окружения)
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+API_KEY = os.getenv("BATTLEMETRICS_API_KEY")
 TIMEZONE = timezone('Europe/Moscow')
 DATA_FILE = 'tracked_players.json'
 MAX_PLAYERS_PER_USER = 10
+
+# Проверка наличия необходимых переменных окружения
+if not TELEGRAM_TOKEN or not API_KEY:
+    raise ValueError("Необходимо установить TELEGRAM_TOKEN и BATTLEMETRICS_API_KEY в .env файле")
 
 # Глобальные переменные
 user_sessions = {}  # {chat_id: {'tracked_players': {player_id: server_id}, 'status_messages': {player_id: message_id}}}
